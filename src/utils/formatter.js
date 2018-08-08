@@ -144,7 +144,7 @@ export const formatExpiry = prevExpiry => {
       return expiry[0];
     }
     if (/\d{2}/.test(expiry)) {
-      return `${expiry[0]}/`;
+      return `${expiry[0]}/ `;
     }
   }
 
