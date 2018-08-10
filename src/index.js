@@ -571,18 +571,11 @@ class CreditCardInput extends Component<Props, State> {
             })}
           </InputWrapper>
         </FieldWrapper>
-        <Fragment>
-          {errors && Object.keys(errors).map((key) => {
-            const errorText = errors[key]
-            if (errorText) {
-              return (
-                <DangerText className={dangerTextClassName} styled={dangerTextStyle}>
-                  {errorText}
-                </DangerText>
-              )
-            }
+        <DangerText className={dangerTextClassName} styled={dangerTextStyle}>
+          {errors && Object.values(errors).find((errorText) => {
+            if (errorText) return errorText
           })}
-        </Fragment>
+        </DangerText>
       </Container>
     );
   };
