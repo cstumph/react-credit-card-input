@@ -465,7 +465,7 @@ class CreditCardInput extends Component<Props, State> {
             inputStyled={inputStyle}
             isActive
             translateX={false}
-            data-max="9999 9999 9999 9999 9999"
+            data-max="9999 9999 9999 9999"
           >
             {cardNumberInputRenderer({
               handleCardNumberChange: onChange =>
@@ -491,7 +491,7 @@ class CreditCardInput extends Component<Props, State> {
           <InputWrapper
             inputStyled={inputStyle}
             isActive
-            data-max="MM/YY 9"
+            data-max="99/99"
             translateX={enableZipInput && !showZip}
           >
             {cardExpiryInputRenderer({
@@ -519,7 +519,7 @@ class CreditCardInput extends Component<Props, State> {
           <InputWrapper
             inputStyled={inputStyle}
             isActive
-            data-max="99999"
+            data-max="999"
             translateX={enableZipInput && !showZip}
           >
             {cardCVCInputRenderer({
@@ -544,7 +544,7 @@ class CreditCardInput extends Component<Props, State> {
             })}
           </InputWrapper>
           <InputWrapper
-            data-max="999999"
+            data-max="99999"
             isActive={enableZipInput}
             isZipActive={showZip}
             translateX={enableZipInput && !showZip}
