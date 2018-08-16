@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import payment from 'payment';
 import creditCardType from 'credit-card-type';
 import styled from 'styled-components';
@@ -218,6 +218,10 @@ class CreditCardInput extends Component<Props, State> {
       this.setState({ showZip: cardNumberLength >= 6 });
     }
 
+    const { cardNumberInputProps } = this.props;
+    cardNumberInputProps.onChange && cardNumberInputProps.onChange(e);
+    onChange && onChange(e);
+
     this.setFieldValid(e.target.name);
     if (cardTypeLengths) {
       const validationLength = cardNumberValidateEarly
@@ -237,10 +241,6 @@ class CreditCardInput extends Component<Props, State> {
         }
       }
     }
-
-    const { cardNumberInputProps } = this.props;
-    cardNumberInputProps.onChange && cardNumberInputProps.onChange(e);
-    onChange && onChange(e);
   };
 
   handleCardNumberKeyPress = (e: any) => {
@@ -276,8 +276,11 @@ class CreditCardInput extends Component<Props, State> {
 
     this.cardExpiryField.value = cardExpiry;
 
-    this.setFieldValid(e.target.name);
+    const { cardExpiryInputProps } = this.props;
+    cardExpiryInputProps.onChange && cardExpiryInputProps.onChange(e);
+    onChange && onChange(e);
 
+    this.setFieldValid(e.target.name);
     const expiryError = isExpiryInvalid(cardExpiry);
     if (cardExpiry && cardExpiry.length > 4) {
       if (expiryError) {
@@ -286,10 +289,6 @@ class CreditCardInput extends Component<Props, State> {
         this.cvcField.focus();
       }
     }
-
-    const { cardExpiryInputProps } = this.props;
-    cardExpiryInputProps.onChange && cardExpiryInputProps.onChange(e);
-    onChange && onChange(e);
   };
 
   handleCardExpiryKeyPress = (e: any) => {
@@ -323,13 +322,6 @@ class CreditCardInput extends Component<Props, State> {
     const isZipFieldAvailable = this.props.enableZipInput && this.state.showZip;
     const cardType = payment.fns.cardType(this.state.cardNumber);
 
-    this.setFieldValid(e.target.name);
-    if (CVCLength >= 4) {
-      if (!payment.fns.validateCardCVC(CVC, cardType)) {
-        this.setFieldInvalid('CVC is invalid', e.target.name);
-      }
-    }
-
     if (isZipFieldAvailable && hasCVCReachedMaxLength(cardType, CVCLength)) {
       this.zipField.focus();
     }
@@ -337,6 +329,13 @@ class CreditCardInput extends Component<Props, State> {
     const { cardCVCInputProps } = this.props;
     cardCVCInputProps.onChange && cardCVCInputProps.onChange(e);
     onChange && onChange(e);
+
+    this.setFieldValid(e.target.name);
+    if (CVCLength >= 4) {
+      if (!payment.fns.validateCardCVC(CVC, cardType)) {
+        this.setFieldInvalid('CVC is invalid', e.target.name);
+      }
+    }
   };
 
   handleCardCVCKeyPress = (e: any) => {
@@ -404,24 +403,23 @@ class CreditCardInput extends Component<Props, State> {
     const { invalidClassName, onValidationChange } = this.props;
     // $FlowFixMe
     document.getElementById('field-wrapper').classList.add(invalidClassName);
-    this.setState({
-      errors: {
-        ...this.state.errors,
-        [fieldName]: errorText
-      }
-    }, onValidationChange(this.state.errors))
+
+    const errors = {
+      ...this.state.errors,
+      [fieldName]: errorText
+    };
+    this.setState({ errors }, onValidationChange(errors));
   };
 
   setFieldValid = (fieldName: string) => {
     const { invalidClassName, onValidationChange } = this.props;
     // $FlowFixMe
     document.getElementById('field-wrapper').classList.remove(invalidClassName);
-    this.setState({
-      errors: {
-        ...this.state.errors,
-        [fieldName]: null
-      }
-    }, onValidationChange(this.state.errors))
+    const errors = {
+      ...this.state.errors,
+      [fieldName]: null
+    };
+    this.setState({ errors }, onValidationChange(errors));
   };
 
   render = () => {
@@ -459,7 +457,11 @@ class CreditCardInput extends Component<Props, State> {
           <CardImage
             className={cardImageClassName}
             styled={cardImageStyle}
-            src={this.cardNumberField && this.cardNumberField.value ? cardImage : images.placeholder}
+            src={
+              this.cardNumberField && this.cardNumberField.value
+                ? cardImage
+                : images.placeholder
+            }
           />
           <InputWrapper
             inputStyled={inputStyle}
@@ -572,9 +574,10 @@ class CreditCardInput extends Component<Props, State> {
           </InputWrapper>
         </FieldWrapper>
         <DangerText className={dangerTextClassName} styled={dangerTextStyle}>
-          {errors && Object.values(errors).find((errorText) => {
-            if (errorText) return errorText
-          })}
+          {errors &&
+            Object.values(errors).find(errorText => {
+              if (errorText) return errorText;
+            })}
         </DangerText>
       </Container>
     );
